@@ -1,7 +1,5 @@
 import styled from 'styled-components';
 import Product from './Product';
-import { popularProducts } from '../data';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { publicRequest } from '../requestMethods';
 
@@ -21,7 +19,7 @@ const Products = ({category, filters, sort}) => {
     const getProducts = async () => {
       try {
         const res = await publicRequest.get(`/products?category=${category?category:"all"}`);
-        console.log(res.data)
+
         setProducts(res.data);
       } catch (err) {
         // TODO: handle error

@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import { mobile } from '../responsive';
 import StripeCheckout from 'react-stripe-checkout';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { userRequest } from '../requestMethods';
 import { useHistory } from 'react-router-dom';
 

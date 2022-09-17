@@ -4,10 +4,12 @@ import ProductList from './pages/ProductList';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Cart from './pages/Cart';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 function App() {
+  const user = useSelector(state => state.user.currentUser);
   return (
     <Router>
       <div className='App'>
@@ -25,10 +27,10 @@ function App() {
             <Cart />
           </Route>
           <Route path="/register">
-            <Register />
+            {user ? <Redirect to="/" /> : <Register />}
           </Route>
           <Route path="/login">
-            <Login />
+            {user ? <Redirect to="/"/> : <Login />}
           </Route>
           <Route path="*">
             <h1>404 Not Found</h1>

@@ -1,4 +1,7 @@
+import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { login } from '../redux/apiCalls';
 import { mobile } from '../responsive';
 
 
@@ -47,10 +50,13 @@ const Button = styled.button`
     color: teal;
     font-weight: 500;
     cursor: pointer;
-
     &:hover {
         background-color: teal;
         color: white;
+    }
+    &:disabled {
+        color: green;
+        cursor: not-allowed;
     }
 `;
 
@@ -62,21 +68,38 @@ const Link = styled.a`
     cursor: pointer;
 `;
 
+const Error = styled.span`
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+`;
+
 const Login = () => {
-  return (
-    <Container>
-        <Wrapper>
-            <Title>SIGN IN</Title>
-            <Form>
-                <Input type="email" placeholder="email" required/>
-                <Input type="password" placeholder="password" required/>
-                <Button type="submit" >LOGIN</Button>
-                <Link >FORGET THE PASSWORD</Link>
-                <Link >CREATE A NEW ACCOUNT</Link>
-            </Form>
-        </Wrapper>
-    </Container>
-  )
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+    const { isFetching, error } = useSelector(state => state.user);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        login(dispatch, {username, password});
+    };
+
+    return (
+        <Container>
+            <Wrapper>
+                <Title>SIGN IN</Title>
+                <Form>
+                    {error && <Error>Something went wrong...</Error>}
+                    <Input type="text" name="username" placeholder="username" onChange={(e) => setUsername(e.target.value)} required/>
+                    <Input type="password" name="password" placeholder="password" onChange={(e) => setPassword(e.target.value)} required/>
+                    <Button type="submit" onClick={handleSubmit} disabled={isFetching}>LOGIN</Button>
+                    <Link >FORGET THE PASSWORD</Link>
+                    <Link >CREATE A NEW ACCOUNT</Link>
+                </Form>
+            </Wrapper>
+        </Container>
+    )
 };
 
 export default Login;
