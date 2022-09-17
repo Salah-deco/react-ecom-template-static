@@ -48,26 +48,26 @@ export const categories = [
 export const popularProducts = [
     {
         id: 1,
-        img: "/images/products/Mens-Jake-Guitar-Vintage-Crusher-Tee_68382_1_lg.png",
+        image: "Mens-Jake-Guitar-Vintage-Crusher-Tee_68382_1_lg.png",
     },
     {
         id: 2,
-        img: "/images/products/UCS319_1YOT_F010O_S_182_SLF.png",
+        image: "UCS319_1YOT_F010O_S_182_SLF.png",
     },
     {
         id: 3,
-        img: "/images/products/1170x1470_robe.png",
+        image: "1170x1470_robe.png",
     },
     {
         id: 4,
-        img: "/images/products/Noissue-x-Creatsy-Tote-Bag-Mockup-Bundle.png",
+        image: "Noissue-x-Creatsy-Tote-Bag-Mockup-Bundle.png",
     },
     {
         id: 5,
-        img: "/images/products/Rocket-Vintage-Chill-Cap_66374_1_lg.png",
+        image: "Rocket-Vintage-Chill-Cap_66374_1_lg.png",
     },
     {
         id: 6,
-        img: "/images/products/Women-Jacket-PNG-High-Quality-Image.png",
+        image: "Women-Jacket-PNG-High-Quality-Image.png",
     },
 ];

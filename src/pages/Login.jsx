@@ -70,7 +70,7 @@ const Login = () => {
             <Form>
                 <Input type="email" placeholder="email" required/>
                 <Input type="password" placeholder="password" required/>
-                <Button>LOGIN</Button>
+                <Button type="submit" >LOGIN</Button>
                 <Link >FORGET THE PASSWORD</Link>
                 <Link >CREATE A NEW ACCOUNT</Link>
             </Form>

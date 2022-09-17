@@ -1,6 +1,8 @@
 import { Badge } from '@material-ui/core';
 import { Search, ShoppingCartOutlined } from '@material-ui/icons';
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import {mobile} from '../responsive';
 
@@ -65,31 +67,41 @@ const MenuItem = styled.div`
 
 
 const Navbar = () => {
-  return (
-    <Container>
-        <Wrapper>
-            <Left>
-                <Language>En</Language>
-                <SearchContainer>
-                    <Input placeholder="Search"/>
-                    <Search style={{color: 'gray', fontSize: 16}}/>
-                </SearchContainer>
-            </Left>
-            <Center>
-                <Logo>Logo.</Logo>
-            </Center>
-            <Right>
-                <MenuItem>REGISTER</MenuItem>
-                <MenuItem>SIGN IN</MenuItem>
-                <MenuItem>
-                    <Badge badgeContent={4} color="primary">
-                        <ShoppingCartOutlined />
-                    </Badge>
-                </MenuItem>
-            </Right>
-        </Wrapper>
-    </Container>
-  )
+    const quantity = useSelector(state => state.cart.quantity);
+
+    return (
+        <Container>
+            <Wrapper>
+                <Left>
+                    <Language>En</Language>
+                    <SearchContainer>
+                        <Input placeholder="Search"/>
+                        <Search style={{color: 'gray', fontSize: 16}}/>
+                    </SearchContainer>
+                </Left>
+                <Center>
+                    <Link to="/" style={{textDecoration: "none"}}>
+                        <Logo>Logo.</Logo>
+                    </Link>
+                </Center>
+                <Right>
+                    <MenuItem>
+                        <Link to="/register">REGISTER</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Link to="/login">SIGN IN</Link>
+                    </MenuItem>
+                    <MenuItem>
+                        <Badge badgeContent={quantity} color="primary">
+                            <Link to="/cart">    
+                                <ShoppingCartOutlined />
+                            </Link>
+                        </Badge>
+                    </MenuItem>
+                </Right>
+            </Wrapper>
+        </Container>
+    )
 }
 
 export default Navbar

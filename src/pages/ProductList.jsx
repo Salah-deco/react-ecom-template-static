@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Announcement from '../components/Announcement';
 import Footer from '../components/Footer';
@@ -32,45 +34,65 @@ const Select = styled.select`
 `;
 const Option = styled.option``;
 
-const ProductList = () => {    
+const ProductList = () => {
+    const [filters, setFilters] = useState({})
+    const [sort, setSort] = useState(0) 
+    const location = useLocation();
+    const category = location.pathname.split("/")[2];
+
+    const handleFilters = (e) => {
+        const value = e.target.value;
+        const name = e.target.name;
+        // if value is all, then delete the key from the filters object
+        if (value === "all") {
+            delete filters[name];
+            setFilters(filters);
+        } else {
+            setFilters({
+                ...filters,
+                [name]: value,
+            });
+        }
+    }
+
     return (
         <Container>
             <Announcement />
             <Navbar />
-            <Title>Dresses</Title>
+            <Title>{category}</Title>
             <FilterContainer>
                 <Filter>
                     <FilterText>Filter Products: </FilterText>
-                    <Select >
-                        <Option display selected>Color</Option>
-                        <Option value="">White</Option>
-                        <Option value="">Black</Option>
-                        <Option value="">Green</Option>
-                        <Option value="">Blue</Option>
-                        <Option value="">Rose</Option>
-                        <Option value="">Red</Option>
-                        <Option value="">Yellow</Option>
+                    <Select name="color" onChange={handleFilters}>
+                        <Option display value="all">Color</Option>
+                        <Option value="white">White</Option>
+                        <Option value="black">Black</Option>
+                        <Option value="green">Green</Option>
+                        <Option value="blue">Blue</Option>
+                        <Option value="rose">Rose</Option>
+                        <Option value="red">Red</Option>
+                        <Option value="yellow">Yellow</Option>
                     </Select>
-                    <Select >
-                        <Option display selected>Size</Option>
-                        <Option value="">XXL</Option>
-                        <Option value="">XL</Option>
-                        <Option value="">L</Option>
-                        <Option value="">M</Option>
-                        <Option value="">S</Option>
-                        <Option value="">XS</Option>
+                    <Select name="size" onChange={handleFilters}>
+                        <Option display value="all">Size</Option>
+                        <Option value="XXL">XXL</Option>
+                        <Option value="XL">XL</Option>
+                        <Option value="L">L</Option>
+                        <Option value="M">M</Option>
+                        <Option value="S">S</Option>
+                        <Option value="XS">XS</Option>
                     </Select>
                 </Filter>
                 <Filter>
                     <FilterText>Sort Products: </FilterText>
-                    <Select >
-                        <Option selected value="">Newest</Option>
-                        <Option value="">Price (asc)</Option>
-                        <Option value="">Price (desc)</Option>
+                    <Select onChange={(e) => setSort(e.target.value)}>
+                        <Option value={0}>Newest</Option>
+                        <Option value={1}>Price (asc)</Option>
+                        <Option value={-1}>Price (desc)</Option>
                     </Select>
                 </Filter>
             </FilterContainer>
-            <Products />
+            <Products category={category} filters={filters} sort={sort} />
             <Newsletter />
             <Footer />
         </Container>

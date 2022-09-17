@@ -1,9 +1,14 @@
 import { Add, Remove } from '@material-ui/icons';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Announcement from '../components/Announcement';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
 import Newsletter from '../components/Newsletter';
+import { addProduct } from '../redux/cartRedux';
+import { publicRequest } from '../requestMethods';
 import { mobile } from '../responsive';
 
 const Container = styled.div``;
@@ -58,6 +63,11 @@ const FilterColor = styled.div`
     background-color: ${props => props.color};
     margin: 0 5px;
     cursor: pointer;
+    border: #  2px solid;
+    opacity: ${props => props.checked ? "1" : "0.4"};
+    &:hover {
+        opacity: 1;
+    }
 `;
 const FilterSize = styled.select`
     margin-left: 10px;
@@ -101,53 +111,91 @@ const Button = styled.button`
 `;
 
 const Product = () => {
-  return (
-    <Container>
-        <Announcement />
-        <Navbar />
-        <Wrapper>
-            <ImageContainer>
-                <Image src="./19-scaled.jpeg" />
-            </ImageContainer>
-            <InfoContainer>
-                <Title>Denim Jumpsuit</Title>
-                <Description>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus consequatur animi quia? Voluptates sit, velit consectetur nemo placeat distinctio voluptatibus temporibus repellendus harum nihil, saepe maiores cum reiciendis! Obcaecati consequuntur dolore aliquam est quis, nulla ad, voluptas placeat et nemo at quam possimus distinctio sit, officia explicabo quod? Commodi qui ipsa autem consequatur quas eius incidunt nobis distinctio! Ex iste suscipit autem officia provident pariatur amet dolor recusandae. Perferendis laboriosam velit molestiae ab ut aperiam vero temporibus alias rerum dolorem? Dolore, reprehenderit repellendus corporis nemo illum nihil aspernatur. Non placeat tempora quam cum id nemo mollitia suscipit necessitatibus quasi cumque.
-                </Description>
-                <Price>$ 20</Price>
-                <FilterContainer>
-                    <Filter>
-                        <FilterTitle>Color </FilterTitle>
-                        <FilterColor color="black" />
-                        <FilterColor color="darkblue" />
-                        <FilterColor color="gray" />
-                        <FilterColor color="white" />
-                    </Filter>
-                    <Filter>
-                        <FilterTitle>Size</FilterTitle>
-                        <FilterSize>
-                            <FilterSizeOption>S</FilterSizeOption>
-                            <FilterSizeOption>M</FilterSizeOption>
-                            <FilterSizeOption>L</FilterSizeOption>
-                            <FilterSizeOption>XL</FilterSizeOption>
-                        </FilterSize>
-                    </Filter>
-                </FilterContainer>
-                <AddContainer>
-                    <AmountContainer>
-                        <Remove />
-                        <Amount>1</Amount>
-                        <Add />
-                    </AmountContainer>
-                    <Button>ADD TO CART</Button>
-                </AddContainer>
-            </InfoContainer>
-        </Wrapper>
+    const [product, setProduct] = useState({});
+    const [quantity, setQuantity] = useState(1);
+    const location = useLocation();
+    const id = location.pathname.split("/")[2];
 
-        <Newsletter />
-        <Footer />
-    </Container>
-  )
+    //? choice of color and size
+    const [color, setColor] = useState("");
+    const [size, setSize] = useState("");
+
+    const dispatch = useDispatch();
+    
+    useEffect(() => {
+        const getProduct = async () => {
+            try {
+                const res = await publicRequest.get("/products/" + id);
+                setProduct(res.data);
+                setColor(res.data.color[0])
+                setSize(res.data.size[0])
+            } catch (err) {
+                // TODO: handle error
+                console.log(err);
+            }
+        };
+        getProduct()
+    }, [id]);
+
+
+    const handleQuantity = (type) => {
+        if(type === 0) {
+            quantity > 1 && setQuantity(prev => prev - 1);
+        } else {
+            setQuantity(prev => prev + 1);
+        }
+    }
+
+    const handleAddToCart = () => {
+        // update cart
+        dispatch(addProduct({id: product._id, image: product.image, title: product.title, price: product.price, quantity, color, size}))
+    }
+
+    return (
+        <Container>
+            <Announcement />
+            <Navbar />
+            <Wrapper>
+                <ImageContainer>
+                    <Image src={`/images/products/${product.image}`} />
+                </ImageContainer>
+                <InfoContainer>
+                    <Title>{product.title}</Title>
+                    <Description>
+                        {product.description}
+                    </Description>
+                    <Price>$ {product.price}</Price>
+                    <FilterContainer>
+                        <Filter>
+                            <FilterTitle>Color </FilterTitle>
+                            {product.color && product.color.map((c, i) => (
+                                <FilterColor checked={c===color} key={i} color={c} onClick={() => setColor(c)}/>
+                            ))}
+                        </Filter>
+                        <Filter>
+                            <FilterTitle>Size</FilterTitle>
+                            <FilterSize onChange={(e) => setSize(e.target.value)}>
+                               {product.size && product.size.map((s, i) => (
+                                    <FilterSizeOption key={i} value={s} selected={s===size}>{s}</FilterSizeOption>
+                               ))}
+                            </FilterSize>
+                        </Filter>
+                    </FilterContainer>
+                    <AddContainer>
+                        <AmountContainer>
+                            <Remove onClick={() => handleQuantity(0)} />
+                            <Amount>{quantity}</Amount>
+                            <Add onClick={() => handleQuantity(1)} />
+                        </AmountContainer>
+                        <Button onClick={handleAddToCart} >ADD TO CART</Button>
+                    </AddContainer>
+                </InfoContainer>
+            </Wrapper>
+
+            <Newsletter />
+            <Footer />
+        </Container>
+    )
 };
 
 export default Product;
